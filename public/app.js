@@ -204,7 +204,10 @@ addEventListener("keydown", (e) => {
   // While typing initials, game shortcuts must stay out of the way: Enter used
   // to restart the run (throwing the score away before it was ever posted) and
   // typing an "M" toggled mute. In a text field, Enter submits the score.
-  if (e.target.closest("input, textarea")) {
+  // `closest` guarded: a keydown can target a non-Element (document itself),
+  // and throwing here would take out every shortcut, Space-to-tap included.
+  const el = e.target;
+  if (el && typeof el.closest === "function" && el.closest("input, textarea")) {
     if (e.code === "Enter" || e.code === "NumpadEnter") {
       e.preventDefault();
       $("postBtn").click();
