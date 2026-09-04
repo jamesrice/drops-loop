@@ -4,15 +4,15 @@
 Plain `python3 -m http.server` sends no Cache-Control header, so browsers
 apply heuristic caching and can silently keep serving a stale module (game.js,
 strings.js, etc.) after an edit — confusing during iterative development.
-This is dev-only tooling; it is never deployed (Cloudflare Pages serves the
-static files directly, not this script).
+This is dev-only tooling; it is never deployed (the Worker's assets binding
+serves ./public directly, not this script).
 """
 import os
 import sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8787
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # project root, not the caller's cwd
+ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public")  # the served site, not the repo root
 
 
 class NoCacheHandler(SimpleHTTPRequestHandler):

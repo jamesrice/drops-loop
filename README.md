@@ -12,9 +12,15 @@ and hear is **Drops Adventure's** visual system — logo, Formiga + Work Sans,
 the 11 Drops flavor colors, the day/night sky keyframes, and the same warm,
 snack-forward voice. No code, art or copy from RushLoop was used.
 
-**Stack:** static site, no build step, plain ES modules — same shape as
-`drops-adventure`. One 2D canvas for the game, DOM for all chrome, one
-Cloudflare Pages Function for the live board.
+**Stack:** static site, no build step, plain ES modules. One 2D canvas for the
+game, DOM for all chrome, served by a Cloudflare **Worker** with an assets
+binding (not Pages) that also hosts the leaderboard API.
+
+```
+public/    the entire served site — nothing outside it is public
+worker/    index.js routes /api/*, everything else falls through to assets
+scripts/   local dev server (never deployed)
+```
 
 ## Play
 
@@ -62,20 +68,26 @@ count toward any of them.
 
 ## Live board
 
-`functions/api/scores.js` is a Pages Function backed by KV (binding `SCORES`).
-`GET /api/scores` returns the all-time top 8; `POST` takes `{n, s, m}` (3-char
-initials, score, pace).
+`worker/scores.js` backs the board with Workers KV (binding `SCORES`, namespace
+`LOOPDEDROP_SCORES`). `GET /api/scores` returns the all-time top 8; `POST` takes
+`{n, s, m}` (3-char initials, score, pace).
 
 The client falls back to a localStorage board whenever the API is unreachable,
-which includes local `npm run dev` — the dev server is static, so `/api/scores`
-404s and the board stays local to your browser.
+which includes `npm run dev` — the python dev server is static-only, so
+`/api/scores` 404s there. Use `npm run dev:worker` (`wrangler dev`) to exercise
+the real API and KV locally.
 
-One-time setup before deploying:
+## Deploy
+
+Pushes to `main` deploy automatically via **Cloudflare Workers Builds** (the
+dashboard's git integration). To deploy by hand:
 
 ```bash
-npx wrangler kv namespace create SCORES   # paste the id into wrangler.toml
-npm run deploy                            # wrangler pages deploy .
+npm run deploy      # wrangler deploy
 ```
+
+Unlike Pages, the KV binding in `wrangler.jsonc` is authoritative for Worker
+deploys — there's no separate dashboard binding to keep in sync.
 
 ## Debug / QA query params
 

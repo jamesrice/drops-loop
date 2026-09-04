@@ -1,0 +1,29 @@
+{
+	"name": "drops-loop",
+	"main": "worker/index.js",
+	"compatibility_date": "2025-10-01",
+	"observability": {
+		"enabled": true
+	},
+
+	// The game is plain static files with no build step. Only ./public is
+	// served — keeping the site in its own directory means the Worker can
+	// never hand out worker source, wrangler.jsonc, the README or scripts/.
+	// run_worker_first keeps /api/* on the Worker; everything else is assets.
+	"assets": {
+		"directory": "./public",
+		"binding": "ASSETS",
+		"run_worker_first": ["/api/*"]
+	},
+
+	// Live Loop Legends board. The namespace is titled LOOPDEDROP_SCORES so it
+	// stays distinct from drops-adventure's own "SCORES" namespace — sharing
+	// one would merge both games' boards. The binding stays SCORES, which is
+	// what worker/scores.js reads.
+	"kv_namespaces": [
+		{
+			"binding": "SCORES",
+			"id": "48a2ac1087a24fbca93cefe4b08d708a"
+		}
+	]
+}
