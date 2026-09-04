@@ -201,6 +201,16 @@ function onTap(e) {
 }
 addEventListener("pointerdown", onTap, { passive: false });
 addEventListener("keydown", (e) => {
+  // While typing initials, game shortcuts must stay out of the way: Enter used
+  // to restart the run (throwing the score away before it was ever posted) and
+  // typing an "M" toggled mute. In a text field, Enter submits the score.
+  if (e.target.closest("input, textarea")) {
+    if (e.code === "Enter" || e.code === "NumpadEnter") {
+      e.preventDefault();
+      $("postBtn").click();
+    }
+    return;
+  }
   if (e.code === "Space" || e.code === "Enter") {
     if (screen === "play") { e.preventDefault(); Loop.tap(); }
     else if (screen === "results") { e.preventDefault(); beginRun(); }
