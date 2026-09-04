@@ -1,0 +1,10 @@
+{
+  "name": "drops-loop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Drops Loop — time the gummy, keep the loop alive",
+  "scripts": {
+    "dev": "python3 scripts/dev-server.py 8798",
+    "deploy": "wrangler pages deploy . --project-name drops-loop"
+  }
+}

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Loop De Drop | Strain specific gummies. One loop. Tap and vibe.</title>
+<link rel="icon" href="./assets/img/drops-logo.png">
+<meta name="description" content="A gummy sweeps the loop. Tap to lock it in the sugar zone. Miss once and the run is over.">
+<meta property="og:title" content="Loop De Drop">
+<meta property="og:description" content="Strain Specific Gummies. One Loop. Tap and Vibe.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap" rel="stylesheet">
+<style>
+  /* Work Sans — self-hosted, same files as Drops Adventure (Regular 400; the
+     CDN has no true 600, and faking one looks worse than the real weight). */
+  @font-face {
+    font-family: "Work Sans";
+    src: url("./assets/fonts/worksans_n4.woff2") format("woff2"),
+         url("./assets/fonts/worksans_n4.woff") format("woff");
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  /* Formiga (700) is licensed commercial (TipoType) — Baloo 2 stands in
+     automatically if the files are absent. */
+  @font-face {
+    font-family: "Formiga";
+    src: url("./assets/fonts/Formiga-Bold.woff2") format("woff2"),
+         url("./assets/fonts/Formiga-Bold.woff") format("woff");
+    font-weight: 700; font-style: normal; font-display: swap;
+  }
+
+  :root {
+    --ink: #1a1030;
+    --panel: rgba(26,16,48,.52);
+    --edge: 1px solid rgba(245,231,200,.20);
+  }
+
+  html, body {
+    margin: 0; height: 100%; overflow: hidden; background: var(--ink);
+    font-family: "Work Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+    color: #fff; touch-action: none; overscroll-behavior: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  canvas { display: block; position: fixed; inset: 0; touch-action: none; }
+
+  h1, h2, .stat b, .big, .modeName, #toastName, #toastFx {
+    font-family: "Formiga", "Baloo 2", "Work Sans", sans-serif; font-weight: 700;
+  }
+
+  #ui { position: fixed; inset: 0; pointer-events: none; display: flex; flex-direction: column; }
+  .screen {
+    position: absolute; inset: 0; pointer-events: auto; overflow-y: auto;
+    -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y;
+    display: flex; flex-direction: column; align-items: center;
+    padding: max(18px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom));
+    box-sizing: border-box;
+  }
+  .screen[hidden] { display: none; }
+  .veil { background: radial-gradient(ellipse at 50% 42%, rgba(26,16,48,.04), rgba(26,16,48,.46) 80%); }
+
+  .panel {
+    background: var(--panel); border: var(--edge); border-radius: 18px;
+    backdrop-filter: blur(14px) saturate(1.2);
+    box-shadow: 0 6px 26px rgba(12,4,26,.38), inset 0 1px 0 rgba(255,255,255,.10);
+  }
+
+  /* ---------- home ---------- */
+  #home { justify-content: center; gap: 14px; }
+  .stack { width: min(460px, 100%); display: flex; flex-direction: column; gap: 12px; margin: auto 0; }
+  .logo { width: 74px; height: auto; display: block; margin: 0 auto 2px;
+    filter: drop-shadow(0 4px 14px rgba(0,0,0,.35)); }
+  h1 {
+    margin: 0; text-align: center; font-size: clamp(38px, 11vw, 56px); letter-spacing: .01em;
+    background: linear-gradient(92deg,#8dc63f 5%,#fbb040 30%,#f7941d 52%,#ef4b5d 75%,#c2185b 96%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 10px rgba(255,255,255,.30));
+  }
+  .tag { text-align: center; font-size: 14px; opacity: .95; margin: -2px 0 4px;
+    text-shadow: 0 1px 6px rgba(60,0,50,.6); }
+
+  .statsTitle { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; font-weight: 800;
+    color: var(--yellow); text-shadow: 0 1px 6px rgba(80,0,60,.6); margin: 4px 0 -4px 4px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .stat { padding: 11px 6px 12px; text-align: center; }
+  .stat span { display: block; font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
+    opacity: .72; margin-bottom: 3px; }
+  .stat b { display: block; font-size: 24px; color: var(--yellow); font-variant-numeric: tabular-nums;
+    text-shadow: 0 1px 8px rgba(255,244,94,.35); }
+
+
+  .btn {
+    display: block; width: 100%; box-sizing: border-box; padding: 15px 20px; border-radius: 999px;
+    border: 2px solid rgba(255,255,255,.6); cursor: pointer; font-family: inherit;
+    font-size: 17px; letter-spacing: .16em; font-weight: 800; color: #fff;
+    background: linear-gradient(92deg,#f7941d,#ef4b5d); text-shadow: 0 1px 4px rgba(60,0,50,.4);
+    box-shadow: 0 6px 22px rgba(239,75,93,.42); transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translateY(-2px) scale(1.02); }
+  .btn:active { transform: scale(.98); }
+  .btn.ghost { background: rgba(26,16,48,.34); box-shadow: none; font-size: 14px; padding: 12px 18px;
+    letter-spacing: .12em; border-color: rgba(255,255,255,.4); }
+  .btn.small { font-size: 13px; padding: 10px 16px; }
+
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mode { padding: 13px 10px 12px; text-align: center; cursor: pointer; border-radius: 16px;
+    border: 2px solid rgba(255,255,255,.35); transition: transform .14s ease, box-shadow .14s ease;
+    background: rgba(26,16,48,.30); }
+  .mode:hover { transform: translateY(-3px); }
+  .mode.on { border-color: #fff; box-shadow: 0 0 0 2px rgba(255,244,94,.5), 0 8px 24px rgba(120,30,120,.45); }
+  .mode.on[data-mode="casual"] { background: linear-gradient(160deg,#3e6b4f,#8dc63f 60%,#fbb040); }
+  .mode.on[data-mode="expert"] { background: linear-gradient(160deg,#ff4f9e,#ef4b5d 55%,#9452ff); }
+  .mode .emoji { font-size: 20px; }
+  .modeName { font-size: 16px; margin: 3px 0 1px; }
+  .mode .s { font-size: 11.5px; opacity: .92; }
+  .label { text-align: center; font-size: 11px; letter-spacing: .28em; text-transform: uppercase;
+    font-weight: 800; color: var(--yellow); text-shadow: 0 1px 6px rgba(80,0,60,.6); }
+
+  /* ---------- hud ---------- */
+  #hud { position: absolute; inset: 0; pointer-events: none; }
+  #hud[hidden] { display: none; }
+  #scoreWrap { position: absolute; top: max(14px, env(safe-area-inset-top)); left: 50%;
+    transform: translateX(-50%); text-align: center; text-shadow: 0 2px 10px rgba(26,16,48,.7); }
+  #scoreWrap .k { font-size: 10.5px; letter-spacing: .28em; opacity: .85; }
+  #scoreVal { font-size: 44px; line-height: 1.05; color: var(--yellow); font-variant-numeric: tabular-nums;
+    font-family: "Formiga", "Baloo 2", sans-serif; font-weight: 700; }
+  #scoreWrap .b { font-size: 12px; opacity: .8; }
+  #comboWrap { position: absolute; top: max(16px, env(safe-area-inset-top)); right: 16px; text-align: right;
+    text-shadow: 0 2px 10px rgba(26,16,48,.7); }
+  #comboWrap .k { font-size: 10px; letter-spacing: .22em; opacity: .8; }
+  #comboVal { font-size: 24px; font-family: "Formiga", "Baloo 2", sans-serif; font-weight: 700; }
+  .iconBtn { position: absolute; width: 42px; height: 42px; border-radius: 14px; cursor: pointer;
+    pointer-events: auto; border: 1.5px solid rgba(255,255,255,.45); font-size: 18px;
+    display: flex; align-items: center; justify-content: center; color: #fff;
+    background: rgba(26,16,48,.42); backdrop-filter: blur(6px); transition: transform .12s ease; }
+  .iconBtn:hover { transform: scale(1.08); }
+  #homeBtn { top: max(16px, env(safe-area-inset-top)); left: 16px; }
+  #muteBtn { bottom: calc(max(22px, env(safe-area-inset-bottom)) + 76px); right: 16px; }
+
+  #tapBar { position: absolute; left: 50%; transform: translateX(-50%);
+    bottom: max(22px, env(safe-area-inset-bottom)); width: min(520px, calc(100% - 32px));
+    padding: 16px; text-align: center; font-size: 14px; letter-spacing: .22em; font-weight: 800;
+    border-radius: 16px; border: var(--edge); background: rgba(26,16,48,.42); backdrop-filter: blur(6px);
+    animation: breathe 2s ease-in-out infinite; }
+  @keyframes breathe { 50% { opacity: .62; } }
+  #tapBar .hint { display: block; font-size: 10.5px; letter-spacing: .1em; font-weight: 400;
+    opacity: .75; margin-top: 5px; }
+
+  /* ---------- toast ---------- */
+  #toast { position: absolute; left: 50%; top: 16%; transform: translateX(-50%); text-align: center;
+    opacity: 0; pointer-events: none; white-space: nowrap; }
+  #toast.pop { animation: toastPop 1.5s cubic-bezier(.2,1.2,.4,1) forwards; }
+  @keyframes toastPop {
+    0% { opacity: 0; transform: translateX(-50%) translateY(14px) scale(.85); }
+    18% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.06); }
+    30% { transform: translateX(-50%) scale(1); }
+    75% { opacity: 1; }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-16px) scale(.97); }
+  }
+  #toastName { font-size: 27px; text-shadow: 0 2px 12px rgba(26,16,48,.75); }
+  #toastFx { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; opacity: .95;
+    text-shadow: 0 2px 8px rgba(26,16,48,.7); }
+  #toastPts { font-size: 13px; font-weight: 700; color: var(--yellow); margin-top: 3px;
+    text-shadow: 0 1px 8px rgba(26,16,48,.8); }
+
+  /* ---------- tutorial / results / board ---------- */
+  #tut, #results, #board { justify-content: center; }
+  .sheet { width: min(430px, 100%); padding: 22px; text-align: center; margin: auto 0; }
+  .sheet h2 { margin: 6px 0 6px; font-size: 25px; }
+  .sheet p { margin: 0 0 4px; font-size: 14px; line-height: 1.65; opacity: .95; }
+  .steps { font-size: 11px; letter-spacing: .2em; opacity: .8; }
+  .dots { display: flex; gap: 7px; justify-content: center; margin: 14px 0 16px; }
+  .dots i { width: 7px; height: 7px; border-radius: 999px; background: rgba(255,255,255,.35); transition: all .2s; }
+  .dots i.on { width: 22px; background: var(--yellow); }
+  [hidden] { display: none !important; }
+  .link { display: inline-block; margin-top: 12px; font-size: 12.5px; opacity: .8;
+    text-decoration: underline; cursor: pointer; pointer-events: auto; }
+
+  .big { font-size: 60px; line-height: 1; color: var(--yellow); font-variant-numeric: tabular-nums;
+    text-shadow: 0 2px 16px rgba(255,244,94,.35); }
+  .runline { font-size: 11px; letter-spacing: .28em; text-transform: uppercase; opacity: .85; }
+  .newBest { color: var(--yellow); font-size: 13.5px; font-weight: 700; margin-top: 4px; }
+  .tallies { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 14px 0 4px; }
+  .tally { background: rgba(26,16,48,.32); border-radius: 12px; padding: 9px 4px; }
+  .tally b { display: block; font-size: 19px; font-family: "Formiga", "Baloo 2", sans-serif; }
+  .tally span { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
+  .initials { display: flex; gap: 9px; justify-content: center; margin: 14px 0 4px; }
+  .initials input { width: 118px; font-size: 24px; text-transform: uppercase; text-align: center;
+    letter-spacing: .3em; border-radius: 12px; border: 2px solid rgba(255,255,255,.55);
+    background: rgba(26,16,48,.5); color: #fff; padding: 9px 4px 9px 14px; font-weight: 800;
+    outline: none; font-family: inherit; touch-action: manipulation; }
+  .initials input:focus { border-color: var(--yellow); box-shadow: 0 0 12px rgba(255,244,94,.5); }
+  .rows { display: flex; flex-direction: column; gap: 5px; margin: 12px 0 4px; }
+  .row { display: grid; grid-template-columns: 26px 62px 1fr auto; align-items: center; gap: 8px;
+    padding: 7px 12px; border-radius: 11px; background: rgba(255,255,255,.14); font-size: 14px;
+    font-weight: 700; text-align: left; }
+  .row.hl { background: linear-gradient(90deg, rgba(141,198,63,.75), rgba(251,176,64,.75)); }
+  .row .m { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; opacity: .8; font-weight: 400; }
+  .empty { font-size: 13px; opacity: .8; padding: 14px 0; }
+  .btnRow { display: flex; gap: 9px; }
+  .sheet .btnRow { margin-top: 14px; }
+  .btnRow .btn { flex: 1; }
+
+  @media (max-height: 640px) {
+    .logo { width: 56px; } h1 { font-size: 36px; } .stack { gap: 9px; }
+    .btn { padding: 13px 18px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<div id="ui">
+  <!-- ============ HOME ============ -->
+  <section class="screen veil" id="home">
+    <div class="stack">
+      <img class="logo" src="./assets/img/drops-logo.png" alt="Drops">
+      <h1 id="titleText">Loop De Drop</h1>
+      <div class="tag" id="tagText"></div>
+
+      <div class="statsTitle" id="statsTitle">Your Drop Stats:</div>
+      <div class="stats">
+        <div class="stat panel"><span id="kBest">Best score</span><b id="statBest">0</b></div>
+        <div class="stat panel"><span id="kTaps">Total taps</span><b id="statTaps">0</b></div>
+        <div class="stat panel"><span id="kPerfects">Best perfects</span><b id="statPerfects">0</b></div>
+      </div>
+
+      <div class="label" id="modeLabel"></div>
+      <div class="modes">
+        <div class="mode" data-mode="casual">
+          <div class="emoji">🌙</div>
+          <div class="modeName">In Da Couch</div>
+          <div class="s">Slower &amp; sweeter</div>
+        </div>
+        <div class="mode" data-mode="expert">
+          <div class="emoji">⚡</div>
+          <div class="modeName">Full Send</div>
+          <div class="s">Fast &amp; Sunny</div>
+        </div>
+      </div>
+
+      <button class="btn" id="playBtn">PLAY</button>
+
+      <div class="btnRow">
+        <button class="btn ghost" id="howBtn">❓ HOW TO PLAY</button>
+      </div>
+      <div class="btnRow"><button class="btn ghost" id="boardBtn">🏆 LOOP LEGENDS</button></div>
+    </div>
+  </section>
+
+  <!-- ============ TUTORIAL ============ -->
+  <section class="screen veil" id="tut" hidden>
+    <div class="sheet panel">
+      <div class="steps" id="tutStep">1 / 3</div>
+      <h2 id="tutTitle"></h2>
+      <p id="tutBody"></p>
+      <div class="dots" id="tutDots"></div>
+      <button class="btn" id="tutNext">Next</button>
+      <div class="link" id="tutSkip">Skip</div>
+    </div>
+  </section>
+
+  <!-- ============ HUD ============ -->
+  <div id="hud" hidden>
+    <div id="scoreWrap">
+      <div class="k" id="kScore">SCORE</div>
+      <div id="scoreVal">0</div>
+      <div class="b" id="hudBest">Best 0</div>
+    </div>
+    <div id="comboWrap">
+      <div class="k" id="kCombo">COMBO</div>
+      <div id="comboVal">x0</div>
+    </div>
+    <div class="iconBtn" id="homeBtn">⌂</div>
+    <div class="iconBtn" id="muteBtn">🔊</div>
+    <div id="tapBar">TAP TO LOCK<span class="hint">Tap, click, or hit Space</span></div>
+    <div id="toast"><div id="toastName"></div><div id="toastFx"></div><div id="toastPts"></div></div>
+  </div>
+
+  <!-- ============ RESULTS ============ -->
+  <section class="screen veil" id="results" hidden>
+    <div class="sheet panel">
+      <div class="runline" id="runOverText"></div>
+      <div class="newBest" id="newBestText" hidden></div>
+      <div class="big" id="finalScore">0</div>
+      <div class="tallies">
+        <div class="tally"><b id="tLocks">0</b><span id="kLocks">Flavors</span></div>
+        <div class="tally"><b id="tPerf">0</b><span id="kPerf">Perfects</span></div>
+      </div>
+      <div class="initials">
+        <input id="initials" maxlength="3" placeholder="YOU" aria-label="Your initials">
+        <button class="btn small" id="postBtn" style="width:auto">POST</button>
+      </div>
+      <div class="btnRow">
+        <button class="btn" id="againBtn">AGAIN</button>
+      </div>
+      <div class="btnRow">
+        <button class="btn ghost" id="backBtn">HOME</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LEADERBOARD ============ -->
+  <section class="screen veil" id="board" hidden>
+    <div class="sheet panel">
+      <h2 id="boardTitle">Loop Legends</h2>
+      <div class="rows" id="boardRows"></div>
+      <button class="btn ghost" id="boardClose">CLOSE</button>
+    </div>
+  </section>
+</div>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>
