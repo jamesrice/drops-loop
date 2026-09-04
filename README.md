@@ -79,8 +79,12 @@ the real API and KV locally.
 
 ## Deploy
 
-Pushes to `main` deploy automatically via **Cloudflare Workers Builds** (the
-dashboard's git integration). To deploy by hand:
+Pushes to `main` deploy automatically via **Cloudflare Workers Builds**, which
+is connected to `jamesrice/drops-loop` in the dashboard. Its build config:
+no build command (there's nothing to build), deploy `npx wrangler deploy`,
+version `npx wrangler versions upload`, root directory `/`.
+
+To deploy by hand:
 
 ```bash
 npm run deploy      # wrangler deploy
