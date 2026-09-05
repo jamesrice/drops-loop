@@ -7,11 +7,6 @@ flower zone opens ahead of it, and you tap to lock the gummy inside the zone.
 Every catch flips the loop's direction, speeds it up and narrows the zone.
 One miss ends the run.
 
-Gameplay is modelled on [rushloop.io](https://rushloop.io); everything you see
-and hear is **Drops Adventure's** visual system — logo, Formiga + Work Sans,
-the 11 Drops flavor colors, the day/night sky keyframes, and the same warm,
-snack-forward voice. No code, art or copy from RushLoop was used.
-
 **Stack:** static site, no build step, plain ES modules. One 2D canvas for the
 game, DOM for all chrome, served by a Cloudflare **Worker** with an assets
 binding (not Pages) that also hosts the leaderboard API.
